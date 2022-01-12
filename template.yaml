@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  delete-cfn-stack-template
+
+Globals:
+  Function:
+    Timeout: 60
+
+Resources:
+  DeleteTestEnvFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: CloudFormationにより作成されたスタックを検出して削除します
+      CodeUri: delete-test-env/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      Policies:
+        - AdministratorAccess
+      Events:
+        Schedule1:
+          Type: Schedule
+          Properties:
+            Description: スケジュール１
+            Schedule: "cron(0 14 * * ? *)"
+        Schedule2:
+          Type: Schedule
+          Properties:
+            Description: スケジュール２
+            Schedule: "cron(30 14 * * ? *)"
+      Environment:
+        Variables:
+          regExp: "test-env-[0-9]+.-stack"
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${DeleteTestEnvFunction}
+      RetentionInDays: 14
