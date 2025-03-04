@@ -1,4 +1,4 @@
-# delete-cfn-stack-template
+# delete-cfn-stack
 
 指定した CloudFormation Stack を削除します。
 
